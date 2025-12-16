@@ -1,0 +1,39 @@
+/**
+ * The following styles get applied inside the editor only.
+ */
+
+.wp-block-telex-block-website-switcher {
+	/* Disable fixed positioning in editor for better editing experience */
+	&[class*="placement-desktop-"],
+	&[class*="placement-mobile-"] {
+		position: relative !important;
+		top: auto !important;
+		left: auto !important;
+		right: auto !important;
+		bottom: auto !important;
+		transform: none !important;
+	}
+
+	.website-switcher__toggle {
+		pointer-events: all;
+	}
+
+	.website-switcher__dropdown {
+		pointer-events: none;
+	}
+
+	.website-switcher__item {
+		cursor: default;
+	}
+	
+	.website-switcher-notice {
+		display: block;
+		margin-top: 10px;
+		font-size: 12px;
+		color: #666;
+		padding: 8px;
+		background: #f0f0f0;
+		border-radius: 4px;
+		text-align: center;
+	}
+}

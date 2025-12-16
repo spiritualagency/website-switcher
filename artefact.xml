@@ -1,0 +1,1071 @@
+<?xml version="1.0"?><artefact xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="artefact.xsd" name="Website Switcher" slug="website-switcher" type="code-package" schemaVersion="2">
+  <file path="readme.txt">
+    <description>This file contains the readme information for the block. It is used to provide information about the block, its usage, and any other relevant details.</description>
+    <content><![CDATA[=== Website Switcher ===
+
+Contributors:      WordPress Telex
+Tags:              block, navigation, website switcher, menu, header, frontend
+Tested up to:      6.8
+Stable tag:        0.1.0
+License:           GPLv2 or later
+License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+
+A beautiful frontend website switcher widget for visitors to navigate between multiple websites, perfect for headers and navigation areas.
+
+== Description ==
+
+The Website Switcher block provides an elegant frontend solution for visitors to navigate between multiple websites or web properties. Add it to your header, navigation, or any frontend area to give your visitors quick access to related sites.
+
+Designed specifically for frontend use, this block displays a customizable icon that, when clicked by visitors, reveals a dropdown list of websites complete with their own icons and links.
+
+Perfect for:
+* Multi-site networks visible to visitors
+* Agency portfolios with multiple client sites
+* Product families with separate websites
+* Brand ecosystems
+* International site versions
+* Corporate site networks
+
+Features:
+* Frontend-focused design for site visitors
+* Customizable switcher icon
+* Add unlimited websites to the list
+* Each website can have its own icon and URL
+* Fully customizable from the block editor
+* Clean, modern design optimized for headers
+* Smooth animations and transitions
+* Responsive layout for all devices
+* Accessible keyboard navigation
+* Click-outside to close functionality
+* Works perfectly in FSE headers and templates
+
+== Installation ==
+
+1. Upload the plugin files to the `/wp-content/plugins/website-switcher` directory, or install the plugin through the WordPress plugins screen directly.
+2. Activate the plugin through the 'Plugins' screen in WordPress
+3. Add the Website Switcher block to your header, navigation, or any page through the block editor or Site Editor
+4. Configure your websites list using the block inspector panel
+5. The switcher will now be visible to all site visitors on the frontend
+
+== Frequently Asked Questions ==
+
+= How do I add this to my site header? =
+
+You can add the Website Switcher block to your header in several ways:
+1. Using the Site Editor (Full Site Editing): Edit your header template and add the block
+2. Using a page builder: Add the block to your header area
+3. Using widgets: If your theme supports header widgets, add the block there
+4. Directly in posts/pages: Simply add the block where you want it to appear
+
+= How do I add websites to the switcher? =
+
+Select the block in the editor, then use the inspector panel on the right to add, edit, or remove websites from your list. Each website requires a name and URL, and you can optionally add an icon URL.
+
+= Will visitors see this on the frontend? =
+
+Yes! This block is specifically designed for frontend use. Once added to your site, all visitors will be able to see and interact with it.
+
+= Can I customize the appearance to match my theme? =
+
+Yes! The block comes with clean default styling that works well with most themes, but you can add custom CSS to match your site's design perfectly. Use the block's CSS classes to target specific elements.
+
+= Does it work on mobile devices? =
+
+Absolutely! The website switcher is fully responsive and works great on all device sizes, including phones and tablets.
+
+= Can I use custom icons? =
+
+Yes, you can provide URLs to any image to use as icons for both the main switcher button and individual websites in the list.
+
+= Does it support keyboard navigation? =
+
+Yes, the switcher is fully accessible with keyboard support, including Escape key to close the dropdown.
+
+== Screenshots ==
+
+1. The website switcher in action on the frontend in a site header
+2. Configuration panel in the block editor
+3. Adding and editing websites in the inspector
+4. Mobile view of the switcher
+5. Dropdown open showing multiple websites
+
+== Changelog ==
+
+= 0.1.0 =
+* Initial release
+* Frontend-focused design for site visitors
+* Add unlimited websites with custom icons
+* Customizable switcher button icon
+* Smooth dropdown animations
+* Full keyboard accessibility
+* Click-outside to close
+* Responsive design
+* Full block editor integration
+* Perfect for headers and navigation areas
+
+== Upgrade Notice ==
+
+= 0.1.0 =
+Initial release of the Website Switcher block - perfect for adding to your site header for visitor navigation.]]></content>
+  </file>
+  <file path="website-switcher.php">
+    <description>This file contains the block registration code in the form of a single block plugin. Any other plugin related functionality should be added to this file. All block rendering functionality should go to the `render.php` file.</description>
+    <content><![CDATA[<?php
+/**
+ * Plugin Name:       Website Switcher
+ * Description:       A beautiful frontend website switcher widget for visitors to navigate between multiple websites
+ * Version:           0.1.0
+ * Requires at least: 6.1
+ * Requires PHP:      7.4
+ * Author:            WordPress Telex
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       website-switcher
+ *
+ * @package WebsiteSwitcher
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Registers the block using the metadata loaded from the `block.json` file.
+ * Behind the scenes, it registers also all assets so they can be enqueued
+ * through the block editor in the corresponding context.
+ *
+ * @see https://developer.wordpress.org/reference/functions/register_block_type/
+ */
+if ( ! function_exists( 'website_switcher_block_init' ) ) {
+	function website_switcher_block_init() {
+		register_block_type( __DIR__ . '/build/' );
+	}
+}
+add_action( 'init', 'website_switcher_block_init' );]]></content>
+  </file>
+  <file path="src/block.json">
+    <description>This file contains metadata about the block including its name, title, category, icon, and other properties.</description>
+    <content><![CDATA[{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "telex/block-website-switcher",
+	"version": "0.1.0",
+	"title": "Website Switcher",
+	"category": "widgets",
+	"icon": "networking",
+	"description": "A frontend website switcher for visitors to navigate between multiple sites",
+	"example": {},
+	"attributes": {
+		"websites": {
+			"type": "array",
+			"default": [
+				{
+					"name": "Main Website",
+					"url": "https://example.com",
+					"icon": ""
+				},
+				{
+					"name": "Blog",
+					"url": "https://blog.example.com",
+					"icon": ""
+				},
+				{
+					"name": "Support",
+					"url": "https://support.example.com",
+					"icon": ""
+				}
+			]
+		},
+		"switcherIcon": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonText": {
+			"type": "string",
+			"default": "Sites"
+		},
+		"desktopPlacement": {
+			"type": "string",
+			"default": "top-right"
+		},
+		"mobilePlacement": {
+			"type": "string",
+			"default": "top-center"
+		},
+		"buttonBackgroundColor": {
+			"type": "string",
+			"default": "#0073aa"
+		},
+		"buttonTextColor": {
+			"type": "string",
+			"default": "#ffffff"
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": ["left", "center", "right"],
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"textdomain": "website-switcher",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js"
+}]]></content>
+  </file>
+  <file path="src/index.js">
+    <description>This file registers the block, specifies the edit and save functions, and loads the block's metadata</description>
+    <content><![CDATA[
+/**
+ * Registers a new block provided a unique name and an object defining its behavior.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
+ */
+import { registerBlockType } from '@wordpress/blocks';
+
+/**
+ * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
+ * All files containing `style` keyword are bundled together. The code used
+ * gets applied both to the front of your site and to the editor.
+ *
+ * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
+ */
+import './style.scss';
+
+/**
+ * Internal dependencies
+ */
+import Edit from './edit';
+import save from './save';
+import metadata from './block.json';
+
+/**
+ * Every block starts by registering a new block type definition.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
+ */
+registerBlockType( metadata.name, {
+	/**
+	 * @see ./edit.js
+	 */
+	edit: Edit,
+
+	/**
+	 * @see ./save.js
+	 */
+	save,
+} );
+]]></content>
+  </file>
+  <file path="src/edit.js">
+    <description>This file contains the edit function for the block which is responsible for rendering the block in the editor.</description>
+    <content><![CDATA[/**
+ * Retrieves the translation of text.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
+ * React hook that is used to mark the block wrapper element.
+ * It provides all the necessary props like the class name.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
+ */
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+
+import { PanelBody, TextControl, Button, Notice, SelectControl, ColorPicker } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+
+/**
+ * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
+ * Those files can contain any CSS code that gets applied to the editor.
+ *
+ * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
+ */
+import './editor.scss';
+
+/**
+ * The edit function describes the structure of your block in the context of the
+ * editor. This represents what the editor will render when the block is used.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#edit
+ *
+ * @param {Object} props Block properties
+ * @return {Element} Element to render.
+ */
+export default function Edit( { attributes, setAttributes } ) {
+	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor } = attributes;
+	const [ isOpen, setIsOpen ] = useState( false );
+
+	const updateWebsite = ( index, field, value ) => {
+		const newWebsites = [ ...websites ];
+		newWebsites[ index ][ field ] = value;
+		setAttributes( { websites: newWebsites } );
+	};
+
+	const addWebsite = () => {
+		setAttributes( {
+			websites: [
+				...websites,
+				{ name: 'New Website', url: 'https://example.com', icon: '' },
+			],
+		} );
+	};
+
+	const removeWebsite = ( index ) => {
+		const newWebsites = websites.filter( ( _, i ) => i !== index );
+		setAttributes( { websites: newWebsites } );
+	};
+
+	const placementOptions = [
+		{ label: __( 'Top Left', 'website-switcher' ), value: 'top-left' },
+		{ label: __( 'Top Center', 'website-switcher' ), value: 'top-center' },
+		{ label: __( 'Top Right', 'website-switcher' ), value: 'top-right' },
+		{ label: __( 'Bottom Left', 'website-switcher' ), value: 'bottom-left' },
+		{ label: __( 'Bottom Center', 'website-switcher' ), value: 'bottom-center' },
+		{ label: __( 'Bottom Right', 'website-switcher' ), value: 'bottom-right' },
+	];
+
+	const blockProps = useBlockProps( {
+		className: `placement-desktop-${desktopPlacement} placement-mobile-${mobilePlacement}`,
+	} );
+
+	const buttonStyle = {
+		backgroundColor: buttonBackgroundColor,
+		color: buttonTextColor,
+	};
+
+	return (
+		<>
+			<InspectorControls>
+				<PanelBody title={ __( 'Switcher Settings', 'website-switcher' ) }>
+					<Notice status="info" isDismissible={ false }>
+						{ __(
+							'This switcher will be visible to all visitors on the frontend. Perfect for headers!',
+							'website-switcher'
+						) }
+					</Notice>
+					<TextControl
+						label={ __( 'Button Text', 'website-switcher' ) }
+						value={ buttonText }
+						onChange={ ( value ) =>
+							setAttributes( { buttonText: value } )
+						}
+						help={ __(
+							'Text to display on the switcher button',
+							'website-switcher'
+						) }
+					/>
+					<TextControl
+						label={ __( 'Switcher Icon URL (Optional)', 'website-switcher' ) }
+						value={ switcherIcon }
+						onChange={ ( value ) =>
+							setAttributes( { switcherIcon: value } )
+						}
+						help={ __(
+							'URL to an icon image for the main switcher button',
+							'website-switcher'
+						) }
+					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Button Colors', 'website-switcher' ) } initialOpen={ true }>
+					<div style={ { marginBottom: '16px' } }>
+						<label style={ { display: 'block', marginBottom: '8px', fontWeight: '500' } }>
+							{ __( 'Background Color', 'website-switcher' ) }
+						</label>
+						<ColorPicker
+							color={ buttonBackgroundColor }
+							onChangeComplete={ ( color ) =>
+								setAttributes( { buttonBackgroundColor: color.hex } )
+							}
+							enableAlpha={ false }
+						/>
+						<div style={ { marginTop: '8px', fontSize: '12px', color: '#666' } }>
+							{ __( 'Current:', 'website-switcher' ) } { buttonBackgroundColor }
+						</div>
+					</div>
+					<div style={ { marginBottom: '16px' } }>
+						<label style={ { display: 'block', marginBottom: '8px', fontWeight: '500' } }>
+							{ __( 'Text Color', 'website-switcher' ) }
+						</label>
+						<ColorPicker
+							color={ buttonTextColor }
+							onChangeComplete={ ( color ) =>
+								setAttributes( { buttonTextColor: color.hex } )
+							}
+							enableAlpha={ false }
+						/>
+						<div style={ { marginTop: '8px', fontSize: '12px', color: '#666' } }>
+							{ __( 'Current:', 'website-switcher' ) } { buttonTextColor }
+						</div>
+					</div>
+					<Button
+						isSecondary
+						onClick={ () => {
+							setAttributes( {
+								buttonBackgroundColor: '#0073aa',
+								buttonTextColor: '#ffffff',
+							} );
+						} }
+					>
+						{ __( 'Reset to Defaults', 'website-switcher' ) }
+					</Button>
+				</PanelBody>
+				<PanelBody title={ __( 'Placement', 'website-switcher' ) } initialOpen={ false }>
+					<SelectControl
+						label={ __( 'Desktop Placement', 'website-switcher' ) }
+						value={ desktopPlacement }
+						options={ placementOptions }
+						onChange={ ( value ) => setAttributes( { desktopPlacement: value } ) }
+						help={ __( 'Position on desktop screens (768px and wider)', 'website-switcher' ) }
+					/>
+					<SelectControl
+						label={ __( 'Mobile Placement', 'website-switcher' ) }
+						value={ mobilePlacement }
+						options={ placementOptions }
+						onChange={ ( value ) => setAttributes( { mobilePlacement: value } ) }
+						help={ __( 'Position on mobile screens (below 768px)', 'website-switcher' ) }
+					/>
+					<Notice status="warning" isDismissible={ false }>
+						{ __(
+							'Placement controls work best when the block is placed in a wide or full-width container.',
+							'website-switcher'
+						) }
+					</Notice>
+				</PanelBody>
+				<PanelBody
+					title={ __( 'Websites', 'website-switcher' ) }
+					initialOpen={ false }
+				>
+					{ websites.map( ( website, index ) => (
+						<div
+							key={ index }
+							style={ {
+								marginBottom: '20px',
+								padding: '15px',
+								border: '1px solid #ddd',
+								borderRadius: '4px',
+								backgroundColor: '#f9f9f9',
+							} }
+						>
+							<h4 style={ { marginTop: 0 } }>
+								{ __( 'Website', 'website-switcher' ) }{ ' ' }
+								{ index + 1 }
+							</h4>
+							<TextControl
+								label={ __( 'Name', 'website-switcher' ) }
+								value={ website.name }
+								onChange={ ( value ) =>
+									updateWebsite( index, 'name', value )
+								}
+							/>
+							<TextControl
+								label={ __( 'URL', 'website-switcher' ) }
+								value={ website.url }
+								onChange={ ( value ) =>
+									updateWebsite( index, 'url', value )
+								}
+								type="url"
+							/>
+							<TextControl
+								label={ __( 'Icon URL (Optional)', 'website-switcher' ) }
+								value={ website.icon }
+								onChange={ ( value ) =>
+									updateWebsite( index, 'icon', value )
+								}
+								help={ __(
+									'Optional icon image URL',
+									'website-switcher'
+								) }
+							/>
+							<Button
+								isDestructive
+								onClick={ () => removeWebsite( index ) }
+								style={ { marginTop: '10px' } }
+							>
+								{ __( 'Remove Website', 'website-switcher' ) }
+							</Button>
+						</div>
+					) ) }
+					<Button isPrimary onClick={ addWebsite }>
+						{ __( 'Add Website', 'website-switcher' ) }
+					</Button>
+				</PanelBody>
+			</InspectorControls>
+
+			<div { ...blockProps }>
+				<div className="website-switcher">
+					<button
+						className="website-switcher__toggle"
+						onClick={ () => setIsOpen( ! isOpen ) }
+						type="button"
+						style={ buttonStyle }
+					>
+						{ switcherIcon && (
+							<img
+								src={ switcherIcon }
+								alt=""
+								className="website-switcher__icon"
+							/>
+						) }
+						<span className="website-switcher__button-text">
+							{ buttonText }
+						</span>
+						<span className="website-switcher__arrow">▼</span>
+					</button>
+					{ isOpen && (
+						<div className="website-switcher__dropdown">
+							<ul className="website-switcher__list">
+								{ websites.map( ( website, index ) => (
+									<li
+										key={ index }
+										className="website-switcher__item"
+									>
+										{ website.icon && (
+											<img
+												src={ website.icon }
+												alt=""
+												className="website-switcher__item-icon"
+											/>
+										) }
+										<span className="website-switcher__item-name">
+											{ website.name }
+										</span>
+									</li>
+								) ) }
+							</ul>
+						</div>
+					) }
+				</div>
+				<div className="website-switcher-notice" style={ { marginTop: '10px', fontSize: '12px', color: '#666' } }>
+					{ __( '👆 Preview - visitors will see this on the frontend', 'website-switcher' ) }
+				</div>
+			</div>
+		</>
+	);
+}]]></content>
+  </file>
+  <file path="src/save.js">
+    <description>This file contains the save function for the block which is responsible for creating the static result of rendering the block on the client to display the saved result on the front end.</description>
+    <content><![CDATA[/**
+ * React hook that is used to mark the block wrapper element.
+ * It provides all the necessary props like the class name.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
+ */
+import { useBlockProps } from '@wordpress/block-editor';
+
+/**
+ * The save function defines the way in which the different attributes should
+ * be combined into the final markup, which is then serialized by the block
+ * editor into `post_content`.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#save
+ *
+ * @param {Object} props Block properties
+ * @return {Element} Element to render.
+ */
+export default function save( { attributes } ) {
+	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor } = attributes;
+
+	const blockProps = useBlockProps.save( {
+		className: `placement-desktop-${desktopPlacement} placement-mobile-${mobilePlacement}`,
+	} );
+
+	const buttonStyle = {
+		backgroundColor: buttonBackgroundColor,
+		color: buttonTextColor,
+	};
+
+	return (
+		<div { ...blockProps }>
+			<div className="website-switcher" data-websites={ JSON.stringify( websites ) }>
+				<button
+					className="website-switcher__toggle"
+					type="button"
+					aria-label="Toggle website switcher"
+					aria-expanded="false"
+					aria-haspopup="true"
+					style={ buttonStyle }
+					data-bg-color={ buttonBackgroundColor }
+					data-text-color={ buttonTextColor }
+				>
+					{ switcherIcon && (
+						<img
+							src={ switcherIcon }
+							alt=""
+							className="website-switcher__icon"
+						/>
+					) }
+					<span className="website-switcher__button-text">
+						{ buttonText }
+					</span>
+					<span className="website-switcher__arrow" aria-hidden="true">▼</span>
+				</button>
+				<div className="website-switcher__dropdown" hidden role="menu">
+					<ul className="website-switcher__list">
+						{ websites.map( ( website, index ) => (
+							<li key={ index } className="website-switcher__item" role="none">
+								<a
+									href={ website.url }
+									className="website-switcher__link"
+									role="menuitem"
+								>
+									{ website.icon && (
+										<img
+											src={ website.icon }
+											alt=""
+											className="website-switcher__item-icon"
+										/>
+									) }
+									<span className="website-switcher__item-name">
+										{ website.name }
+									</span>
+								</a>
+							</li>
+						) ) }
+					</ul>
+				</div>
+			</div>
+		</div>
+	);
+}]]></content>
+  </file>
+  <file path="src/style.scss">
+    <description>This file contains styles for the block in the front end.</description>
+    <content><![CDATA[/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ */
+
+.wp-block-telex-block-website-switcher {
+	position: relative;
+	display: block;
+}
+
+.website-switcher {
+	position: relative;
+	display: inline-block;
+}
+
+.website-switcher__toggle {
+	/* Inherit button styling from theme */
+	border: none;
+	border-radius: inherit;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5em;
+	padding: 0.6em 1em;
+	font-size: inherit;
+	font-weight: inherit;
+	font-family: inherit;
+	line-height: inherit;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+
+	&:hover {
+		opacity: 0.85;
+		transform: translateY(-1px);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+
+	&:focus {
+		outline: 2px solid currentColor;
+		outline-offset: 2px;
+	}
+
+	&[aria-expanded="true"] {
+		opacity: 0.85;
+		
+		.website-switcher__arrow {
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.website-switcher__icon {
+	width: 1.25em;
+	height: 1.25em;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+.website-switcher__button-text {
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+.website-switcher__arrow {
+	font-size: 0.7em;
+	transition: transform 0.2s ease;
+	display: inline-block;
+}
+
+.website-switcher__dropdown {
+	position: absolute;
+	top: calc(100% + 0.5em);
+	left: 0;
+	right: 0;
+	min-width: 220px;
+	/* Inherit card/panel styling from theme */
+	background: var(--wp--preset--color--base, #fff);
+	color: var(--wp--preset--color--contrast, #000);
+	border: 1px solid var(--wp--preset--color--contrast, rgba(0, 0, 0, 0.1));
+	opacity: 0.95;
+	border-radius: inherit;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+	z-index: 10000;
+	opacity: 1;
+	transform: translateY(0);
+	transition: opacity 0.2s ease, transform 0.2s ease;
+
+	&[hidden] {
+		display: none;
+	}
+
+	&.is-animating-in {
+		animation: slideDown 0.2s ease;
+	}
+
+	&.is-animating-out {
+		animation: slideUp 0.2s ease;
+	}
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+}
+
+.website-switcher__list {
+	list-style: none;
+	margin: 0;
+	padding: 0.5em 0;
+}
+
+.website-switcher__item {
+	margin: 0;
+	padding: 0;
+}
+
+.website-switcher__link {
+	display: flex;
+	align-items: center;
+	padding: 0.75em 1em;
+	text-decoration: none;
+	/* Inherit link colors from theme */
+	color: inherit;
+	transition: background-color 0.15s ease;
+	gap: 0.75em;
+	font-size: inherit;
+	line-height: inherit;
+
+	&:hover {
+		background-color: var(--wp--preset--color--contrast, rgba(0, 0, 0, 0.05));
+		opacity: 0.9;
+	}
+
+	&:active {
+		opacity: 0.8;
+	}
+
+	&:focus {
+		outline: 2px solid currentColor;
+		outline-offset: -2px;
+		background-color: var(--wp--preset--color--contrast, rgba(0, 0, 0, 0.05));
+	}
+}
+
+.website-switcher__item-icon {
+	width: 1.25em;
+	height: 1.25em;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+.website-switcher__item-name {
+	font-size: inherit;
+	line-height: inherit;
+	flex: 1;
+	word-break: break-word;
+}
+
+/* Placement styles */
+
+/* Desktop placements (768px and up) */
+@media (min-width: 768px) {
+	.placement-desktop-top-left {
+		position: fixed;
+		top: 20px;
+		left: 20px;
+		z-index: 9999;
+	}
+
+	.placement-desktop-top-center {
+		position: fixed;
+		top: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 9999;
+	}
+
+	.placement-desktop-top-right {
+		position: fixed;
+		top: 20px;
+		right: 20px;
+		z-index: 9999;
+	}
+
+	.placement-desktop-bottom-left {
+		position: fixed;
+		bottom: 20px;
+		left: 20px;
+		z-index: 9999;
+	}
+
+	.placement-desktop-bottom-center {
+		position: fixed;
+		bottom: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 9999;
+	}
+
+	.placement-desktop-bottom-right {
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
+		z-index: 9999;
+	}
+}
+
+/* Mobile placements (below 768px) */
+@media (max-width: 767px) {
+	.placement-mobile-top-left {
+		position: fixed;
+		top: 15px;
+		left: 15px;
+		z-index: 9999;
+	}
+
+	.placement-mobile-top-center {
+		position: fixed;
+		top: 15px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 9999;
+	}
+
+	.placement-mobile-top-right {
+		position: fixed;
+		top: 15px;
+		right: 15px;
+		z-index: 9999;
+	}
+
+	.placement-mobile-bottom-left {
+		position: fixed;
+		bottom: 15px;
+		left: 15px;
+		z-index: 9999;
+	}
+
+	.placement-mobile-bottom-center {
+		position: fixed;
+		bottom: 15px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 9999;
+	}
+
+	.placement-mobile-bottom-right {
+		position: fixed;
+		bottom: 15px;
+		right: 15px;
+		z-index: 9999;
+	}
+
+	.website-switcher__dropdown {
+		min-width: 200px;
+	}
+}
+
+/* Editor-specific notice */
+.website-switcher-notice {
+	display: none;
+}]]></content>
+  </file>
+  <file path="src/editor.scss">
+    <description>This file contains styles for the block in the editor.</description>
+    <content><![CDATA[/**
+ * The following styles get applied inside the editor only.
+ */
+
+.wp-block-telex-block-website-switcher {
+	/* Disable fixed positioning in editor for better editing experience */
+	&[class*="placement-desktop-"],
+	&[class*="placement-mobile-"] {
+		position: relative !important;
+		top: auto !important;
+		left: auto !important;
+		right: auto !important;
+		bottom: auto !important;
+		transform: none !important;
+	}
+
+	.website-switcher__toggle {
+		pointer-events: all;
+	}
+
+	.website-switcher__dropdown {
+		pointer-events: none;
+	}
+
+	.website-switcher__item {
+		cursor: default;
+	}
+	
+	.website-switcher-notice {
+		display: block;
+		margin-top: 10px;
+		font-size: 12px;
+		color: #666;
+		padding: 8px;
+		background: #f0f0f0;
+		border-radius: 4px;
+		text-align: center;
+	}
+}]]></content>
+  </file>
+  <file path="src/view.js">
+    <description>This file contains the view function for the block which is responsible for rendering interactive behaviors of the block on the front end.</description>
+    <content><![CDATA[/**
+ * Use this file for JavaScript code that you want to run in the front-end
+ * on posts/pages that contain this block.
+ * 
+ * This code handles the interactive behavior of the website switcher for visitors.
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+	const switchers = document.querySelectorAll('.website-switcher');
+
+	switchers.forEach(function(switcher) {
+		const toggle = switcher.querySelector('.website-switcher__toggle');
+		const dropdown = switcher.querySelector('.website-switcher__dropdown');
+
+		if (!toggle || !dropdown) {
+			return;
+		}
+
+		let isOpen = false;
+
+		// Toggle dropdown on button click
+		toggle.addEventListener('click', function(e) {
+			e.stopPropagation();
+			isOpen = !isOpen;
+
+			if (isOpen) {
+				openDropdown();
+			} else {
+				closeDropdown();
+			}
+		});
+
+		function openDropdown() {
+			dropdown.hidden = false;
+			dropdown.classList.add('is-animating-in');
+			toggle.setAttribute('aria-expanded', 'true');
+			
+			setTimeout(function() {
+				dropdown.classList.remove('is-animating-in');
+			}, 200);
+
+			// Focus first link for accessibility
+			const firstLink = dropdown.querySelector('.website-switcher__link');
+			if (firstLink) {
+				setTimeout(function() {
+					firstLink.focus();
+				}, 100);
+			}
+		}
+
+		function closeDropdown() {
+			dropdown.classList.add('is-animating-out');
+			toggle.setAttribute('aria-expanded', 'false');
+			
+			setTimeout(function() {
+				dropdown.hidden = true;
+				dropdown.classList.remove('is-animating-out');
+			}, 200);
+			
+			isOpen = false;
+		}
+
+		// Close dropdown when clicking outside
+		document.addEventListener('click', function(e) {
+			if (isOpen && !switcher.contains(e.target)) {
+				closeDropdown();
+			}
+		});
+
+		// Close dropdown on Escape key
+		document.addEventListener('keydown', function(e) {
+			if (isOpen && e.key === 'Escape') {
+				closeDropdown();
+				toggle.focus();
+			}
+		});
+
+		// Handle keyboard navigation within dropdown
+		dropdown.addEventListener('keydown', function(e) {
+			if (!isOpen) return;
+
+			const links = Array.from(dropdown.querySelectorAll('.website-switcher__link'));
+			const currentIndex = links.indexOf(document.activeElement);
+
+			if (e.key === 'ArrowDown') {
+				e.preventDefault();
+				const nextIndex = currentIndex < links.length - 1 ? currentIndex + 1 : 0;
+				links[nextIndex].focus();
+			} else if (e.key === 'ArrowUp') {
+				e.preventDefault();
+				const prevIndex = currentIndex > 0 ? currentIndex - 1 : links.length - 1;
+				links[prevIndex].focus();
+			} else if (e.key === 'Home') {
+				e.preventDefault();
+				links[0].focus();
+			} else if (e.key === 'End') {
+				e.preventDefault();
+				links[links.length - 1].focus();
+			}
+		});
+	});
+});]]></content>
+  </file>
+</artefact>

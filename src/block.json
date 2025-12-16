@@ -1,0 +1,70 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "telex/block-website-switcher",
+	"version": "0.1.0",
+	"title": "Website Switcher",
+	"category": "widgets",
+	"icon": "networking",
+	"description": "A frontend website switcher for visitors to navigate between multiple sites",
+	"example": {},
+	"attributes": {
+		"websites": {
+			"type": "array",
+			"default": [
+				{
+					"name": "Main Website",
+					"url": "https://example.com",
+					"icon": ""
+				},
+				{
+					"name": "Blog",
+					"url": "https://blog.example.com",
+					"icon": ""
+				},
+				{
+					"name": "Support",
+					"url": "https://support.example.com",
+					"icon": ""
+				}
+			]
+		},
+		"switcherIcon": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonText": {
+			"type": "string",
+			"default": "Sites"
+		},
+		"desktopPlacement": {
+			"type": "string",
+			"default": "top-right"
+		},
+		"mobilePlacement": {
+			"type": "string",
+			"default": "top-center"
+		},
+		"buttonBackgroundColor": {
+			"type": "string",
+			"default": "#0073aa"
+		},
+		"buttonTextColor": {
+			"type": "string",
+			"default": "#ffffff"
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": ["left", "center", "right"],
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"textdomain": "website-switcher",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js"
+}
