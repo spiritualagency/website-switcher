@@ -17,7 +17,7 @@ import { useBlockProps } from '@wordpress/block-editor';
  * @return {Element} Element to render.
  */
 export default function save( { attributes } ) {
-	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor } = attributes;
+	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor, borderRadius } = attributes;
 
 	const blockProps = useBlockProps.save( {
 		className: `placement-desktop-${desktopPlacement} placement-mobile-${mobilePlacement}`,
@@ -26,6 +26,11 @@ export default function save( { attributes } ) {
 	const buttonStyle = {
 		backgroundColor: buttonBackgroundColor,
 		color: buttonTextColor,
+		borderRadius: borderRadius + 'px',
+	};
+
+	const dropdownStyle = {
+		borderRadius: Math.min(borderRadius, 8) + 'px',
 	};
 
 	return (
@@ -40,6 +45,7 @@ export default function save( { attributes } ) {
 					style={ buttonStyle }
 					data-bg-color={ buttonBackgroundColor }
 					data-text-color={ buttonTextColor }
+					data-border-radius={ borderRadius }
 				>
 					{ switcherIcon && (
 						<img
@@ -53,7 +59,7 @@ export default function save( { attributes } ) {
 					</span>
 					<span className="website-switcher__arrow" aria-hidden="true">▼</span>
 				</button>
-				<div className="website-switcher__dropdown" hidden role="menu">
+				<div className="website-switcher__dropdown" hidden role="menu" style={ dropdownStyle }>
 					<ul className="website-switcher__list">
 						{ websites.map( ( website, index ) => (
 							<li key={ index } className="website-switcher__item" role="none">

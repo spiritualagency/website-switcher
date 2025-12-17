@@ -153,7 +153,7 @@ add_action( 'init', 'website_switcher_block_init' );]]></content>
 	"title": "Website Switcher",
 	"category": "widgets",
 	"icon": "networking",
-	"description": "A frontend website switcher for visitors to navigate between multiple sites",
+	"description": "A draggable floating website switcher for visitors to navigate between multiple sites",
 	"example": {},
 	"attributes": {
 		"websites": {
@@ -186,11 +186,11 @@ add_action( 'init', 'website_switcher_block_init' );]]></content>
 		},
 		"desktopPlacement": {
 			"type": "string",
-			"default": "top-right"
+			"default": "center-right"
 		},
 		"mobilePlacement": {
 			"type": "string",
-			"default": "top-center"
+			"default": "center-right"
 		},
 		"buttonBackgroundColor": {
 			"type": "string",
@@ -199,6 +199,10 @@ add_action( 'init', 'website_switcher_block_init' );]]></content>
 		"buttonTextColor": {
 			"type": "string",
 			"default": "#ffffff"
+		},
+		"borderRadius": {
+			"type": "number",
+			"default": 4
 		}
 	},
 	"supports": {
@@ -277,7 +281,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 
-import { PanelBody, TextControl, Button, Notice, SelectControl, ColorPicker } from '@wordpress/components';
+import { PanelBody, TextControl, Button, Notice, SelectControl, ColorPicker, RangeControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 
 /**
@@ -298,7 +302,7 @@ import './editor.scss';
  * @return {Element} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor } = attributes;
+	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor, borderRadius } = attributes;
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const updateWebsite = ( index, field, value ) => {
@@ -323,10 +327,13 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const placementOptions = [
 		{ label: __( 'Top Left', 'website-switcher' ), value: 'top-left' },
-		{ label: __( 'Top Center', 'website-switcher' ), value: 'top-center' },
+		{ label: __( 'Top Centre', 'website-switcher' ), value: 'top-center' },
 		{ label: __( 'Top Right', 'website-switcher' ), value: 'top-right' },
+		{ label: __( 'Centre Left', 'website-switcher' ), value: 'center-left' },
+		{ label: __( 'Centre Centre', 'website-switcher' ), value: 'center-center' },
+		{ label: __( 'Centre Right', 'website-switcher' ), value: 'center-right' },
 		{ label: __( 'Bottom Left', 'website-switcher' ), value: 'bottom-left' },
-		{ label: __( 'Bottom Center', 'website-switcher' ), value: 'bottom-center' },
+		{ label: __( 'Bottom Centre', 'website-switcher' ), value: 'bottom-center' },
 		{ label: __( 'Bottom Right', 'website-switcher' ), value: 'bottom-right' },
 	];
 
@@ -337,6 +344,11 @@ export default function Edit( { attributes, setAttributes } ) {
 	const buttonStyle = {
 		backgroundColor: buttonBackgroundColor,
 		color: buttonTextColor,
+		borderRadius: borderRadius + 'px',
+	};
+
+	const dropdownStyle = {
+		borderRadius: Math.min(borderRadius, 8) + 'px',
 	};
 
 	return (
@@ -345,7 +357,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				<PanelBody title={ __( 'Switcher Settings', 'website-switcher' ) }>
 					<Notice status="info" isDismissible={ false }>
 						{ __(
-							'This switcher will be visible to all visitors on the frontend. Perfect for headers!',
+							'This is a floating, draggable button that visitors can reposition on the frontend.',
 							'website-switcher'
 						) }
 					</Notice>
@@ -372,7 +384,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						) }
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Button Colors', 'website-switcher' ) } initialOpen={ true }>
+				<PanelBody title={ __( 'Button Appearance', 'website-switcher' ) } initialOpen={ true }>
 					<div style={ { marginBottom: '16px' } }>
 						<label style={ { display: 'block', marginBottom: '8px', fontWeight: '500' } }>
 							{ __( 'Background Color', 'website-switcher' ) }
@@ -403,39 +415,76 @@ export default function Edit( { attributes, setAttributes } ) {
 							{ __( 'Current:', 'website-switcher' ) } { buttonTextColor }
 						</div>
 					</div>
+					<RangeControl
+						label={ __( 'Border Radius', 'website-switcher' ) }
+						value={ borderRadius }
+						onChange={ ( value ) => setAttributes( { borderRadius: value } ) }
+						min={ 0 }
+						max={ 100 }
+						step={ 1 }
+						help={ __(
+							'Set to 50+ for a circular button',
+							'website-switcher'
+						) }
+					/>
+					<div style={ { display: 'flex', gap: '8px', marginTop: '12px' } }>
+						<Button
+							isSecondary
+							isSmall
+							onClick={ () => setAttributes( { borderRadius: 4 } ) }
+						>
+							{ __( 'Rounded', 'website-switcher' ) }
+						</Button>
+						<Button
+							isSecondary
+							isSmall
+							onClick={ () => setAttributes( { borderRadius: 50 } ) }
+						>
+							{ __( 'Circle', 'website-switcher' ) }
+						</Button>
+						<Button
+							isSecondary
+							isSmall
+							onClick={ () => setAttributes( { borderRadius: 0 } ) }
+						>
+							{ __( 'Square', 'website-switcher' ) }
+						</Button>
+					</div>
 					<Button
 						isSecondary
 						onClick={ () => {
 							setAttributes( {
 								buttonBackgroundColor: '#0073aa',
 								buttonTextColor: '#ffffff',
+								borderRadius: 4,
 							} );
 						} }
-					>
-						{ __( 'Reset to Defaults', 'website-switcher' ) }
-					</Button>
+						style={ { marginTop: '12px' } }
+						>
+							{ __( 'Reset All to Defaults', 'website-switcher' ) }
+						</Button>
 				</PanelBody>
-				<PanelBody title={ __( 'Placement', 'website-switcher' ) } initialOpen={ false }>
-					<SelectControl
-						label={ __( 'Desktop Placement', 'website-switcher' ) }
-						value={ desktopPlacement }
-						options={ placementOptions }
-						onChange={ ( value ) => setAttributes( { desktopPlacement: value } ) }
-						help={ __( 'Position on desktop screens (768px and wider)', 'website-switcher' ) }
-					/>
-					<SelectControl
-						label={ __( 'Mobile Placement', 'website-switcher' ) }
-						value={ mobilePlacement }
-						options={ placementOptions }
-						onChange={ ( value ) => setAttributes( { mobilePlacement: value } ) }
-						help={ __( 'Position on mobile screens (below 768px)', 'website-switcher' ) }
-					/>
-					<Notice status="warning" isDismissible={ false }>
+				<PanelBody title={ __( 'Initial Placement', 'website-switcher' ) } initialOpen={ false }>
+					<Notice status="info" isDismissible={ false }>
 						{ __(
-							'Placement controls work best when the block is placed in a wide or full-width container.',
+							'Set the initial position. Visitors can drag the button to reposition it anywhere on the page.',
 							'website-switcher'
 						) }
 					</Notice>
+					<SelectControl
+						label={ __( 'Desktop Initial Position', 'website-switcher' ) }
+						value={ desktopPlacement }
+						options={ placementOptions }
+						onChange={ ( value ) => setAttributes( { desktopPlacement: value } ) }
+						help={ __( 'Starting position on desktop screens (768px and wider)', 'website-switcher' ) }
+					/>
+					<SelectControl
+						label={ __( 'Mobile Initial Position', 'website-switcher' ) }
+						value={ mobilePlacement }
+						options={ placementOptions }
+						onChange={ ( value ) => setAttributes( { mobilePlacement: value } ) }
+						help={ __( 'Starting position on mobile screens (below 768px)', 'website-switcher' ) }
+					/>
 				</PanelBody>
 				<PanelBody
 					title={ __( 'Websites', 'website-switcher' ) }
@@ -518,7 +567,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						<span className="website-switcher__arrow">▼</span>
 					</button>
 					{ isOpen && (
-						<div className="website-switcher__dropdown">
+						<div className="website-switcher__dropdown" style={ dropdownStyle }>
 							<ul className="website-switcher__list">
 								{ websites.map( ( website, index ) => (
 									<li
@@ -542,7 +591,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					) }
 				</div>
 				<div className="website-switcher-notice" style={ { marginTop: '10px', fontSize: '12px', color: '#666' } }>
-					{ __( '👆 Preview - visitors will see this on the frontend', 'website-switcher' ) }
+					{ __( '👆 Floating & draggable on frontend - visitors can reposition it!', 'website-switcher' ) }
 				</div>
 			</div>
 		</>
@@ -570,7 +619,7 @@ import { useBlockProps } from '@wordpress/block-editor';
  * @return {Element} Element to render.
  */
 export default function save( { attributes } ) {
-	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor } = attributes;
+	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor, borderRadius } = attributes;
 
 	const blockProps = useBlockProps.save( {
 		className: `placement-desktop-${desktopPlacement} placement-mobile-${mobilePlacement}`,
@@ -579,6 +628,11 @@ export default function save( { attributes } ) {
 	const buttonStyle = {
 		backgroundColor: buttonBackgroundColor,
 		color: buttonTextColor,
+		borderRadius: borderRadius + 'px',
+	};
+
+	const dropdownStyle = {
+		borderRadius: Math.min(borderRadius, 8) + 'px',
 	};
 
 	return (
@@ -593,6 +647,7 @@ export default function save( { attributes } ) {
 					style={ buttonStyle }
 					data-bg-color={ buttonBackgroundColor }
 					data-text-color={ buttonTextColor }
+					data-border-radius={ borderRadius }
 				>
 					{ switcherIcon && (
 						<img
@@ -606,7 +661,7 @@ export default function save( { attributes } ) {
 					</span>
 					<span className="website-switcher__arrow" aria-hidden="true">▼</span>
 				</button>
-				<div className="website-switcher__dropdown" hidden role="menu">
+				<div className="website-switcher__dropdown" hidden role="menu" style={ dropdownStyle }>
 					<ul className="website-switcher__list">
 						{ websites.map( ( website, index ) => (
 							<li key={ index } className="website-switcher__item" role="none">
@@ -648,14 +703,61 @@ export default function save( { attributes } ) {
 }
 
 .website-switcher {
-	position: relative;
+	position: fixed;
 	display: inline-block;
+	z-index: 999999;
+	cursor: grab;
+
+	&:active {
+		cursor: grabbing;
+	}
+
+	&.is-dragging {
+		cursor: grabbing;
+		user-select: none;
+		
+		.website-switcher__toggle {
+			pointer-events: none;
+		}
+	}
+}
+
+.website-switcher__drag-handle {
+	position: absolute;
+	top: -8px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 32px;
+	height: 6px;
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
+	cursor: grab;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	pointer-events: all;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 48px;
+		height: 24px;
+	}
+
+	.website-switcher:hover & {
+		opacity: 1;
+	}
+
+	&:active {
+		cursor: grabbing;
+	}
 }
 
 .website-switcher__toggle {
 	/* Inherit button styling from theme */
 	border: none;
-	border-radius: inherit;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
@@ -668,10 +770,12 @@ export default function save( { attributes } ) {
 	line-height: inherit;
 	transition: all 0.2s ease;
 	white-space: nowrap;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
 	&:hover {
 		opacity: 0.85;
 		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 	}
 
 	&:active {
@@ -721,7 +825,6 @@ export default function save( { attributes } ) {
 	color: var(--wp--preset--color--contrast, #000);
 	border: 1px solid var(--wp--preset--color--contrast, rgba(0, 0, 0, 0.1));
 	opacity: 0.95;
-	border-radius: inherit;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 	z-index: 10000;
 	opacity: 1;
@@ -816,99 +919,119 @@ export default function save( { attributes } ) {
 	word-break: break-word;
 }
 
-/* Placement styles */
+/* Initial placement styles */
 
 /* Desktop placements (768px and up) */
 @media (min-width: 768px) {
-	.placement-desktop-top-left {
-		position: fixed;
-		top: 20px;
+	.placement-desktop-top-left .website-switcher {
 		left: 20px;
-		z-index: 9999;
+		top: 20px;
+		transform: none;
 	}
 
-	.placement-desktop-top-center {
-		position: fixed;
-		top: 20px;
+	.placement-desktop-top-center .website-switcher {
 		left: 50%;
-		transform: translateX(-50%);
-		z-index: 9999;
-	}
-
-	.placement-desktop-top-right {
-		position: fixed;
 		top: 20px;
-		right: 20px;
-		z-index: 9999;
+		transform: translateX(-50%);
 	}
 
-	.placement-desktop-bottom-left {
-		position: fixed;
-		bottom: 20px;
+	.placement-desktop-top-right .website-switcher {
+		right: 20px;
+		top: 20px;
+		transform: none;
+	}
+
+	.placement-desktop-center-left .website-switcher {
 		left: 20px;
-		z-index: 9999;
+		top: 50%;
+		transform: translateY(-50%);
 	}
 
-	.placement-desktop-bottom-center {
-		position: fixed;
-		bottom: 20px;
+	.placement-desktop-center-center .website-switcher {
 		left: 50%;
-		transform: translateX(-50%);
-		z-index: 9999;
+		top: 50%;
+		transform: translate(-50%, -50%);
 	}
 
-	.placement-desktop-bottom-right {
-		position: fixed;
-		bottom: 20px;
+	.placement-desktop-center-right .website-switcher {
 		right: 20px;
-		z-index: 9999;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	.placement-desktop-bottom-left .website-switcher {
+		left: 20px;
+		bottom: 20px;
+		transform: none;
+	}
+
+	.placement-desktop-bottom-center .website-switcher {
+		left: 50%;
+		bottom: 20px;
+		transform: translateX(-50%);
+	}
+
+	.placement-desktop-bottom-right .website-switcher {
+		right: 20px;
+		bottom: 20px;
+		transform: none;
 	}
 }
 
 /* Mobile placements (below 768px) */
 @media (max-width: 767px) {
-	.placement-mobile-top-left {
-		position: fixed;
-		top: 15px;
+	.placement-mobile-top-left .website-switcher {
 		left: 15px;
-		z-index: 9999;
+		top: 15px;
+		transform: none;
 	}
 
-	.placement-mobile-top-center {
-		position: fixed;
-		top: 15px;
+	.placement-mobile-top-center .website-switcher {
 		left: 50%;
-		transform: translateX(-50%);
-		z-index: 9999;
-	}
-
-	.placement-mobile-top-right {
-		position: fixed;
 		top: 15px;
-		right: 15px;
-		z-index: 9999;
+		transform: translateX(-50%);
 	}
 
-	.placement-mobile-bottom-left {
-		position: fixed;
-		bottom: 15px;
+	.placement-mobile-top-right .website-switcher {
+		right: 15px;
+		top: 15px;
+		transform: none;
+	}
+
+	.placement-mobile-center-left .website-switcher {
 		left: 15px;
-		z-index: 9999;
+		top: 50%;
+		transform: translateY(-50%);
 	}
 
-	.placement-mobile-bottom-center {
-		position: fixed;
-		bottom: 15px;
+	.placement-mobile-center-center .website-switcher {
 		left: 50%;
-		transform: translateX(-50%);
-		z-index: 9999;
+		top: 50%;
+		transform: translate(-50%, -50%);
 	}
 
-	.placement-mobile-bottom-right {
-		position: fixed;
-		bottom: 15px;
+	.placement-mobile-center-right .website-switcher {
 		right: 15px;
-		z-index: 9999;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	.placement-mobile-bottom-left .website-switcher {
+		left: 15px;
+		bottom: 15px;
+		transform: none;
+	}
+
+	.placement-mobile-bottom-center .website-switcher {
+		left: 50%;
+		bottom: 15px;
+		transform: translateX(-50%);
+	}
+
+	.placement-mobile-bottom-right .website-switcher {
+		right: 15px;
+		bottom: 15px;
+		transform: none;
 	}
 
 	.website-switcher__dropdown {
@@ -969,7 +1092,7 @@ export default function save( { attributes } ) {
  * Use this file for JavaScript code that you want to run in the front-end
  * on posts/pages that contain this block.
  * 
- * This code handles the interactive behavior of the website switcher for visitors.
+ * This code handles the interactive behavior of the draggable website switcher for visitors.
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -984,9 +1107,49 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 
 		let isOpen = false;
+		let isDragging = false;
+		let dragStartX = 0;
+		let dragStartY = 0;
+		let switcherStartX = 0;
+		let switcherStartY = 0;
+
+		// Create drag handle
+		const dragHandle = document.createElement('div');
+		dragHandle.className = 'website-switcher__drag-handle';
+		switcher.insertBefore(dragHandle, switcher.firstChild);
+
+		// Load saved position from localStorage
+		const savedPosition = localStorage.getItem('websiteSwitcherPosition');
+		if (savedPosition) {
+			try {
+				const position = JSON.parse(savedPosition);
+				if (window.innerWidth >= 768) {
+					if (position.desktop) {
+						switcher.style.left = position.desktop.left;
+						switcher.style.top = position.desktop.top;
+						switcher.style.right = 'auto';
+						switcher.style.bottom = 'auto';
+						switcher.style.transform = 'none';
+					}
+				} else {
+					if (position.mobile) {
+						switcher.style.left = position.mobile.left;
+						switcher.style.top = position.mobile.top;
+						switcher.style.right = 'auto';
+						switcher.style.bottom = 'auto';
+						switcher.style.transform = 'none';
+					}
+				}
+			} catch (e) {
+				// Invalid saved position, ignore
+			}
+		}
 
 		// Toggle dropdown on button click
 		toggle.addEventListener('click', function(e) {
+			if (isDragging) {
+				return;
+			}
 			e.stopPropagation();
 			isOpen = !isOpen;
 
@@ -1027,6 +1190,100 @@ document.addEventListener('DOMContentLoaded', function() {
 			isOpen = false;
 		}
 
+		// Dragging functionality
+		function startDrag(e) {
+			if (e.target.closest('.website-switcher__dropdown') || 
+				e.target.closest('.website-switcher__toggle')) {
+				// Don't start drag if clicking on dropdown or button itself
+				if (!e.target.closest('.website-switcher__drag-handle')) {
+					return;
+				}
+			}
+
+			e.preventDefault();
+			isDragging = true;
+			switcher.classList.add('is-dragging');
+
+			const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+			const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+			dragStartX = clientX;
+			dragStartY = clientY;
+
+			const rect = switcher.getBoundingClientRect();
+			switcherStartX = rect.left;
+			switcherStartY = rect.top;
+
+			// Close dropdown when starting to drag
+			if (isOpen) {
+				closeDropdown();
+			}
+		}
+
+		function drag(e) {
+			if (!isDragging) return;
+
+			e.preventDefault();
+
+			const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+			const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+			const deltaX = clientX - dragStartX;
+			const deltaY = clientY - dragStartY;
+
+			let newX = switcherStartX + deltaX;
+			let newY = switcherStartY + deltaY;
+
+			// Constrain to viewport
+			const rect = switcher.getBoundingClientRect();
+			const maxX = window.innerWidth - rect.width;
+			const maxY = window.innerHeight - rect.height;
+
+			newX = Math.max(0, Math.min(newX, maxX));
+			newY = Math.max(0, Math.min(newY, maxY));
+
+			switcher.style.left = newX + 'px';
+			switcher.style.top = newY + 'px';
+			switcher.style.right = 'auto';
+			switcher.style.bottom = 'auto';
+			switcher.style.transform = 'none';
+		}
+
+		function endDrag() {
+			if (!isDragging) return;
+
+			isDragging = false;
+			switcher.classList.remove('is-dragging');
+
+			// Save position to localStorage
+			const rect = switcher.getBoundingClientRect();
+			const savedPosition = JSON.parse(localStorage.getItem('websiteSwitcherPosition') || '{}');
+			
+			if (window.innerWidth >= 768) {
+				savedPosition.desktop = {
+					left: rect.left + 'px',
+					top: rect.top + 'px'
+				};
+			} else {
+				savedPosition.mobile = {
+					left: rect.left + 'px',
+					top: rect.top + 'px'
+				};
+			}
+
+			localStorage.setItem('websiteSwitcherPosition', JSON.stringify(savedPosition));
+		}
+
+		// Mouse events
+		switcher.addEventListener('mousedown', startDrag);
+		document.addEventListener('mousemove', drag);
+		document.addEventListener('mouseup', endDrag);
+
+		// Touch events
+		switcher.addEventListener('touchstart', startDrag, { passive: false });
+		document.addEventListener('touchmove', drag, { passive: false });
+		document.addEventListener('touchend', endDrag);
+
 		// Close dropdown when clicking outside
 		document.addEventListener('click', function(e) {
 			if (isOpen && !switcher.contains(e.target)) {
@@ -1063,6 +1320,17 @@ document.addEventListener('DOMContentLoaded', function() {
 			} else if (e.key === 'End') {
 				e.preventDefault();
 				links[links.length - 1].focus();
+			}
+		});
+
+		// Handle window resize - reposition if needed
+		window.addEventListener('resize', function() {
+			const rect = switcher.getBoundingClientRect();
+			if (rect.right > window.innerWidth || rect.bottom > window.innerHeight) {
+				const newX = Math.min(rect.left, window.innerWidth - rect.width);
+				const newY = Math.min(rect.top, window.innerHeight - rect.height);
+				switcher.style.left = Math.max(0, newX) + 'px';
+				switcher.style.top = Math.max(0, newY) + 'px';
 			}
 		});
 	});

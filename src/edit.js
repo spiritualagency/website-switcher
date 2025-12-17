@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 
-import { PanelBody, TextControl, Button, Notice, SelectControl, ColorPicker } from '@wordpress/components';
+import { PanelBody, TextControl, Button, Notice, SelectControl, ColorPicker, RangeControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 
 /**
@@ -34,7 +34,7 @@ import './editor.scss';
  * @return {Element} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor } = attributes;
+	const { websites, switcherIcon, buttonText, desktopPlacement, mobilePlacement, buttonBackgroundColor, buttonTextColor, borderRadius } = attributes;
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const updateWebsite = ( index, field, value ) => {
@@ -59,10 +59,13 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const placementOptions = [
 		{ label: __( 'Top Left', 'website-switcher' ), value: 'top-left' },
-		{ label: __( 'Top Center', 'website-switcher' ), value: 'top-center' },
+		{ label: __( 'Top Centre', 'website-switcher' ), value: 'top-center' },
 		{ label: __( 'Top Right', 'website-switcher' ), value: 'top-right' },
+		{ label: __( 'Centre Left', 'website-switcher' ), value: 'center-left' },
+		{ label: __( 'Centre Centre', 'website-switcher' ), value: 'center-center' },
+		{ label: __( 'Centre Right', 'website-switcher' ), value: 'center-right' },
 		{ label: __( 'Bottom Left', 'website-switcher' ), value: 'bottom-left' },
-		{ label: __( 'Bottom Center', 'website-switcher' ), value: 'bottom-center' },
+		{ label: __( 'Bottom Centre', 'website-switcher' ), value: 'bottom-center' },
 		{ label: __( 'Bottom Right', 'website-switcher' ), value: 'bottom-right' },
 	];
 
@@ -73,6 +76,11 @@ export default function Edit( { attributes, setAttributes } ) {
 	const buttonStyle = {
 		backgroundColor: buttonBackgroundColor,
 		color: buttonTextColor,
+		borderRadius: borderRadius + 'px',
+	};
+
+	const dropdownStyle = {
+		borderRadius: Math.min(borderRadius, 8) + 'px',
 	};
 
 	return (
@@ -81,7 +89,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				<PanelBody title={ __( 'Switcher Settings', 'website-switcher' ) }>
 					<Notice status="info" isDismissible={ false }>
 						{ __(
-							'This switcher will be visible to all visitors on the frontend. Perfect for headers!',
+							'This is a floating, draggable button that visitors can reposition on the frontend.',
 							'website-switcher'
 						) }
 					</Notice>
@@ -108,7 +116,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						) }
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Button Colors', 'website-switcher' ) } initialOpen={ true }>
+				<PanelBody title={ __( 'Button Appearance', 'website-switcher' ) } initialOpen={ true }>
 					<div style={ { marginBottom: '16px' } }>
 						<label style={ { display: 'block', marginBottom: '8px', fontWeight: '500' } }>
 							{ __( 'Background Color', 'website-switcher' ) }
@@ -139,39 +147,76 @@ export default function Edit( { attributes, setAttributes } ) {
 							{ __( 'Current:', 'website-switcher' ) } { buttonTextColor }
 						</div>
 					</div>
+					<RangeControl
+						label={ __( 'Border Radius', 'website-switcher' ) }
+						value={ borderRadius }
+						onChange={ ( value ) => setAttributes( { borderRadius: value } ) }
+						min={ 0 }
+						max={ 100 }
+						step={ 1 }
+						help={ __(
+							'Set to 50+ for a circular button',
+							'website-switcher'
+						) }
+					/>
+					<div style={ { display: 'flex', gap: '8px', marginTop: '12px' } }>
+						<Button
+							isSecondary
+							isSmall
+							onClick={ () => setAttributes( { borderRadius: 4 } ) }
+						>
+							{ __( 'Rounded', 'website-switcher' ) }
+						</Button>
+						<Button
+							isSecondary
+							isSmall
+							onClick={ () => setAttributes( { borderRadius: 50 } ) }
+						>
+							{ __( 'Circle', 'website-switcher' ) }
+						</Button>
+						<Button
+							isSecondary
+							isSmall
+							onClick={ () => setAttributes( { borderRadius: 0 } ) }
+						>
+							{ __( 'Square', 'website-switcher' ) }
+						</Button>
+					</div>
 					<Button
 						isSecondary
 						onClick={ () => {
 							setAttributes( {
 								buttonBackgroundColor: '#0073aa',
 								buttonTextColor: '#ffffff',
+								borderRadius: 4,
 							} );
 						} }
-					>
-						{ __( 'Reset to Defaults', 'website-switcher' ) }
-					</Button>
+						style={ { marginTop: '12px' } }
+						>
+							{ __( 'Reset All to Defaults', 'website-switcher' ) }
+						</Button>
 				</PanelBody>
-				<PanelBody title={ __( 'Placement', 'website-switcher' ) } initialOpen={ false }>
-					<SelectControl
-						label={ __( 'Desktop Placement', 'website-switcher' ) }
-						value={ desktopPlacement }
-						options={ placementOptions }
-						onChange={ ( value ) => setAttributes( { desktopPlacement: value } ) }
-						help={ __( 'Position on desktop screens (768px and wider)', 'website-switcher' ) }
-					/>
-					<SelectControl
-						label={ __( 'Mobile Placement', 'website-switcher' ) }
-						value={ mobilePlacement }
-						options={ placementOptions }
-						onChange={ ( value ) => setAttributes( { mobilePlacement: value } ) }
-						help={ __( 'Position on mobile screens (below 768px)', 'website-switcher' ) }
-					/>
-					<Notice status="warning" isDismissible={ false }>
+				<PanelBody title={ __( 'Initial Placement', 'website-switcher' ) } initialOpen={ false }>
+					<Notice status="info" isDismissible={ false }>
 						{ __(
-							'Placement controls work best when the block is placed in a wide or full-width container.',
+							'Set the initial position. Visitors can drag the button to reposition it anywhere on the page.',
 							'website-switcher'
 						) }
 					</Notice>
+					<SelectControl
+						label={ __( 'Desktop Initial Position', 'website-switcher' ) }
+						value={ desktopPlacement }
+						options={ placementOptions }
+						onChange={ ( value ) => setAttributes( { desktopPlacement: value } ) }
+						help={ __( 'Starting position on desktop screens (768px and wider)', 'website-switcher' ) }
+					/>
+					<SelectControl
+						label={ __( 'Mobile Initial Position', 'website-switcher' ) }
+						value={ mobilePlacement }
+						options={ placementOptions }
+						onChange={ ( value ) => setAttributes( { mobilePlacement: value } ) }
+						help={ __( 'Starting position on mobile screens (below 768px)', 'website-switcher' ) }
+					/>
 				</PanelBody>
 				<PanelBody
 					title={ __( 'Websites', 'website-switcher' ) }
@@ -254,7 +299,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						<span className="website-switcher__arrow">▼</span>
 					</button>
 					{ isOpen && (
-						<div className="website-switcher__dropdown">
+						<div className="website-switcher__dropdown" style={ dropdownStyle }>
 							<ul className="website-switcher__list">
 								{ websites.map( ( website, index ) => (
 									<li
@@ -278,7 +323,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					) }
 				</div>
 				<div className="website-switcher-notice" style={ { marginTop: '10px', fontSize: '12px', color: '#666' } }>
-					{ __( '👆 Preview - visitors will see this on the frontend', 'website-switcher' ) }
+					{ __( '👆 Floating & draggable on frontend - visitors can reposition it!', 'website-switcher' ) }
 				</div>
 			</div>
 		</>

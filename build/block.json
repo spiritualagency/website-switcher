@@ -6,7 +6,7 @@
   "title": "Website Switcher",
   "category": "widgets",
   "icon": "networking",
-  "description": "A frontend website switcher for visitors to navigate between multiple sites",
+  "description": "A draggable floating website switcher for visitors to navigate between multiple sites",
   "example": {},
   "attributes": {
     "websites": {
@@ -39,11 +39,11 @@
     },
     "desktopPlacement": {
       "type": "string",
-      "default": "top-right"
+      "default": "center-right"
     },
     "mobilePlacement": {
       "type": "string",
-      "default": "top-center"
+      "default": "center-right"
     },
     "buttonBackgroundColor": {
       "type": "string",
@@ -52,6 +52,10 @@
     "buttonTextColor": {
       "type": "string",
       "default": "#ffffff"
+    },
+    "borderRadius": {
+      "type": "number",
+      "default": 4
     }
   },
   "supports": {
