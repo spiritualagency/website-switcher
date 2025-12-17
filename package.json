@@ -1,7 +1,7 @@
 {
     "name": "block-website-switcher",
     "version": "0.1.0",
-    "description": "A frontend website switcher for visitors to navigate between multiple sites",
+    "description": "A draggable floating website switcher for visitors to navigate between multiple sites",
     "author": "telex block authoring tool",
     "license": "GPL-2.0-or-later",
     "main": "build/index.js",
